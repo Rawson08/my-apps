@@ -42,7 +42,8 @@
       }
 
       function navigateToApp(appUrl) {
-        window.location.href = appUrl;
+        const token = localStorage.getItem("token");
+        window.location.href = `${appUrl}?token=${token}`;
       }
 
       function handleLogout() {
@@ -63,14 +64,14 @@
         <!-- Example Apps -->
         <div
           class="app-card"
-          onclick="navigateToApp('https://roshansubedi.me/groceries-list/groceries-manager-home.html')"
+          onclick="navigateToApp('groceries-manager-home.html')"
         >
           <h3>Grocery List Manager</h3>
           <p>Organize your grocery shopping with ease.</p>
         </div>
         <div class="app-card" onclick="navigateToApp('futureApp.html')">
           <h3>Future App</h3>
-          <p>Another app under development.</p>
+          <p>Other apps under development.</p>
         </div>
       </div>
     </main>
