@@ -19,7 +19,7 @@
     </div>
     <script>
       async function handleLogin() {
-        const username = document.getElementById("login-username").value;
+        const username = document.getElementById("login-username").value.trim();
         const password = document.getElementById("login-password").value;
 
         if (!username || !password) {
@@ -28,7 +28,7 @@
         }
 
         const response = await fetch(
-          "https://groceries-list-backend-27e12ecc8182.herokuapp.com/login",
+          "https://my-apps-backend-e1163c7dec9d.herokuapp.com/auth/login",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -38,12 +38,27 @@
 
         if (response.ok) {
           const data = await response.json();
+          // if (!data.isVerified) {
+          //   alert(
+          //     "Your email is not verified. Redirecting to email verification."
+          //   );
+          //   localStorage.setItem("email", data.email);
+          //   window.location.href = "email-verify.html";
+          //   return;
+          // }
+
           localStorage.setItem("token", data.token); // Save token to local storage
           //   alert("Login successful!");
           window.location.href = "apps.html";
         } else {
           const errorData = await response.json();
-          alert(`Error: ${errorData.message}`);
+          if (errorData.redirect) {
+            alert(errorData.message); // Notify the user
+            localStorage.setItem("email", errorData.email); // Save email for verification
+            window.location.href = errorData.redirect; // Redirect to email verification
+          } else {
+            alert(`Error: ${errorData.message}`);
+          }
         }
       }
     </script>
