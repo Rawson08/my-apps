@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="profile-settings-container">
+      <h1>Profile Settings</h1>
+      <div class="profile-container">
+        <button class="profile-btn" onclick="toggleProfileMenu()">P</button>
+        <div id="profile-menu" class="profile-menu">
+          <a href="./apps.html">Dashboard</a>
+          <a href="#">Profile Settings</a>
+          <a href="#" onclick="handleLogout()">Logout</a>
+        </div>
+      </div>
+      <!-- Update Password Section -->
+      <div class="settings-section">
+        <h2>Update Password</h2>
+        <form id="update-password-form">
+          <label for="current-password">Current Password</label>
+          <input
+            type="password"
+            id="current-password"
+            placeholder="Enter current password"
+            required
+          />
+
+          <label for="new-password">New Password</label>
+          <input
+            type="password"
+            id="new-password"
+            placeholder="Enter new password"
+            required
+          />
+
+          <label for="confirm-new-password">Confirm New Password</label>
+          <input
+            type="password"
+            id="confirm-new-password"
+            placeholder="Confirm new password"
+            required
+          />
+
+          <button type="submit">Update Password</button>
+        </form>
+        <p id="password-response-message"></p>
+      </div>
+
+      <!-- Update Email Section -->
+      <div class="settings-section">
+        <h2>Update Email</h2>
+        <form id="update-email-form">
+          <label for="new-email">New Email</label>
+          <input
+            type="email"
+            id="new-email"
+            placeholder="Enter new email address"
+            required
+          />
+
+          <button type="submit">Update Email</button>
+        </form>
+        <p id="email-response-message"></p>
+      </div>
+
+      <!-- Delete Account Section -->
+      <div class="settings-section delete-account">
+        <h2>Danger Zone</h2>
+        <p class="warning-text">
+          Deleting your account will permanently remove all your data, including
+          your grocery list and profile information. This action cannot be
+          undone.
+        </p>
+        <button id="delete-account-button">Delete Account</button>
+      </div>
+    </div>
+
+    <script>
+      function handleLogout() {
+        localStorage.removeItem("token");
+        window.location.href = "index.html";
+      }
+
+      function toggleProfileMenu() {
+        const menu = document.getElementById("profile-menu");
+        menu.classList.toggle("show");
+      }
+
+      const BACKEND_URL = "https://my-apps-backend-e1163c7dec9d.herokuapp.com";
+      const GLM_BACKEND_URL =
+        "https://groceries-list-backend-27e12ecc8182.herokuapp.com";
+
+      // Update Password
+      document
+        .getElementById("update-password-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const token = localStorage.getItem("token");
+          const currentPassword =
+            document.getElementById("current-password").value;
+          const newPassword = document.getElementById("new-password").value;
+          const confirmNewPassword = document.getElementById(
+            "confirm-new-password"
+          ).value;
+
+          if (newPassword !== confirmNewPassword) {
+            document.getElementById("password-response-message").textContent =
+              "Passwords do not match.";
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `${BACKEND_URL}/auth/update-password`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ currentPassword, newPassword }),
+              }
+            );
+
+            const result = await response.json();
+            document.getElementById("password-response-message").textContent =
+              result.message || "Error updating password.";
+          } catch (error) {
+            console.error("Error updating password:", error);
+          }
+        });
+
+      // Update Email
+      document
+        .getElementById("update-email-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const token = localStorage.getItem("token");
+          const newEmail = document.getElementById("new-email").value;
+
+          try {
+            const response = await fetch(`${BACKEND_URL}/auth/update-email`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ newEmail }),
+            });
+
+            const result = await response.json();
+            document.getElementById("email-response-message").textContent =
+              result.message || "Error updating email.";
+          } catch (error) {
+            console.error("Error updating email:", error);
+          }
+        });
+
+      // Delete Account
+      document
+        .getElementById("delete-account-button")
+        .addEventListener("click", async function () {
+          if (
+            confirm(
+              "Are you sure you want to delete your account? This action cannot be undone."
+            )
+          ) {
+            const token = localStorage.getItem("token");
+
+            try {
+              // Delete the account in the main backend
+              await fetch(`${BACKEND_URL}/auth/delete-account`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+              });
+
+              // Delete associated data from GLM backend
+              await fetch(`${GLM_BACKEND_URL}/delete-user-data`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+              });
+
+              alert("Your account has been deleted.");
+              localStorage.removeItem("token");
+              window.location.href = "index.html";
+            } catch (error) {
+              console.error("Error deleting account:", error);
+            }
+          }
+        });
+    </script>
+  </body>
+</html>
