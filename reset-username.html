@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Username | Roshan's AppHub</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      const BACKEND_URL = "https://my-apps-backend-e1163c7dec9d.herokuapp.com";
+
+      async function handleResetUsername(event) {
+        event.preventDefault();
+        const emailInput = document.getElementById("emailInput").value.trim();
+        if (!emailInput) {
+          alert("Please enter your email address.");
+        }
+
+        try {
+          const response = await fetch(`${BACKEND_URL}/auth/reset-username`, {
+            method: POST,
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({ email: emailInput }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert(result.message);
+          } else {
+            alert(`Error: ${result.message}`);
+          }
+        } catch (error) {
+          console.error("Error during reset username request:", error);
+          alert("An error occured while processing your request.");
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Reset Username</h1>
+      <p>
+        Enter your email address, and we will send en email with your username.
+      </p>
+      <form id="resetUsernameForm" onsubmit="handleResetUsername(event)">
+        <label for="emailInput">Email address:</label>
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="Enter your email"
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

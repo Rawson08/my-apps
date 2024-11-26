@@ -28,10 +28,10 @@
 
         if (response.ok) {
           const data = await response.json();
-          const username = capitalizeFirstLetter(data.username);
+          const firstname = capitalizeFirstLetter(data.firstname);
           document.getElementById(
             "welcome-message"
-          ).textContent = `Welcome, ${username}`;
+          ).textContent = `Welcome, ${firstname}`;
         } else {
           alert("Error fetching user details.");
         }
