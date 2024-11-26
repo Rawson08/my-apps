@@ -24,6 +24,8 @@
       <p>Already have an account? <a href="index.html">Login</a></p>
     </div>
     <script>
+      const messageElement = document.getElementById("message");
+
       async function handleSignup() {
         const firstname = document
           .getElementById("signup-firstname")
@@ -48,12 +50,14 @@
           !password ||
           !confirmPassword
         ) {
-          alert("Please fill in all fields");
+          messageElement.textContent = "Please fill in all fields";
+          messageElement.style.color = "red";
           return;
         }
 
         if (password !== confirmPassword) {
-          alert("Passwords do not match");
+          messageElement.textContent = "Passwords do not match";
+          messageElement.style.color = "red";
           return;
         }
 
@@ -72,17 +76,13 @@
           }
         );
 
-        const message = document.getElementById("message");
         if (response.ok) {
-          message.textContent = "Signup Successful! Please verify your email.";
           localStorage.setItem("email", useremail);
-          // alert(
-          //   "Signup successful! Please check your email for verification and log in."
-          // );
           window.location.href = "email-verify.html";
         } else {
           const errorData = await response.json();
-          alert(`Error: ${errorData.message}`);
+          messageElement.textContent = errorData.message;
+          messageElement.style.color = "red";
         }
       }
     </script>

@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="styles.css" />
     <script>
       const BACKEND_URL = "https://my-apps-backend-e1163c7dec9d.herokuapp.com";
+      const messageElement = document.getElementById("response-message");
 
       async function handleResetUsername(event) {
         event.preventDefault();
         const emailInput = document.getElementById("emailInput").value.trim();
         if (!emailInput) {
-          alert("Please enter your email address.");
+          messageElement.textContent = "Please enter your email address.";
+          messageElement.style.color = "red";
         }
 
         try {
@@ -25,13 +27,17 @@
           const result = await response.json();
 
           if (response.ok) {
-            alert(result.message);
+            messageElement.textContent = result.message;
+            messageElement.style.color = "green";
           } else {
-            alert(`Error: ${result.message}`);
+            messageElement.textContent = result.message;
+            messageElement.style.color = "red";
           }
         } catch (error) {
           console.error("Error during reset username request:", error);
-          alert("An error occured while processing your request.");
+          messageElement.textContent =
+            "An error occured while processing your request.";
+          messageElement.style.color = "red";
         }
       }
     </script>
@@ -52,6 +58,7 @@
         />
         <button type="submit">Submit</button>
       </form>
+      <p id="response-message"></p>
     </div>
   </body>
 </html>

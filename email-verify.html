@@ -20,6 +20,7 @@
         maxlength="6"
       />
       <button id="verify-button" onclick="verifyEmail()">Verify</button>
+      <p id="response-message"></p>
       <p>
         Didn't receive a code?
         <a href="#" onclick="resendCode()">Resend Code</a>
@@ -27,12 +28,15 @@
     </div>
 
     <script>
+      const messageElement = document.getElementById("response-message");
+
       async function verifyEmail() {
         const email = localStorage.getItem("email"); // Store user's email during signup/login
         const code = document.getElementById("verification-code").value.trim();
 
         if (!code || code.length !== 6) {
-          alert("Please enter a valid 6-digit code.");
+          messageElement.textContent = `Please enter a valid 6-digit code.`;
+          messageElement.style.color = "red";
           return;
         }
 
@@ -47,12 +51,13 @@
 
         const message = document.getElementById("verify-button");
         if (response.ok) {
-          message.textContent = "Email Verified!";
-          alert("Email verified successfully!");
+          messageElement.textContent = `Email verified successfully!`;
+          messageElement.style.color = "green";
           window.location.href = "index.html"; // Redirect to login page
         } else {
           const errorData = await response.json();
-          alert(`Error: ${errorData.message}`);
+          messageElement.textContent = `Error: ${errorData.message}`;
+          messageElement.style.color = "red";
         }
       }
 
@@ -60,7 +65,8 @@
         const email = localStorage.getItem("email"); // Retrieve user's email from localStorage
 
         if (!email) {
-          alert("Error: No email found. Please sign up again.");
+          messageElement.textContent = `Error: No email found. Please sign up again.`;
+          messageElement.style.color = "red";
           window.location.href = "signup.html";
           return;
         }
@@ -75,10 +81,12 @@
         );
 
         if (response.ok) {
-          alert("Verification code resent. Please check your email.");
+          messageElement.textContent = `Verification email sent. Please check your email.`;
+          messageElement.style.color = "green";
         } else {
           const errorData = await response.json();
-          alert(`Error: ${errorData.message}`);
+          messageElement.textContent = errorData.message;
+          messageElement.style.color = "red";
         }
       }
     </script>
