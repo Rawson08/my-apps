@@ -333,3 +333,37 @@ footer {
     padding: 1.5em;
     width: 90%;
   }
+
+  /* Profile Information Styling */
+.profile-information input {
+    width: 100%;
+    margin: 0.8em 0;
+  }
+  
+  .profile-information button {
+    width: 100%;
+    background-color: #6200ea;
+    color: white;
+    font-weight: bold;
+    padding: 1em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-information button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .profile-information button:hover:not(:disabled) {
+    background-color: #4a00c2;
+  }
+  
+  .profile-information p {
+    margin-top: 1em;
+    font-size: 0.9em;
+    font-weight: bold;
+  }
+  
