@@ -7,14 +7,18 @@
     <link rel="stylesheet" href="styles.css" />
     <script>
       const BACKEND_URL = "https://my-apps-backend-e1163c7dec9d.herokuapp.com";
-      const messageElement = document.getElementById("response-message");
+
+      async function handleBackButton() {
+        window.location.href = `index.html`;
+      }
 
       async function handleResetUsername(event) {
         event.preventDefault();
         const emailInput = document.getElementById("emailInput").value.trim();
         if (!emailInput) {
-          messageElement.textContent = "Please enter your email address.";
-          messageElement.style.color = "red";
+          document.getElementById("response-message").textContent =
+            "Please enter your email address.";
+          document.getElementById("response-message").style.color = "red";
         }
 
         try {
@@ -25,6 +29,7 @@
           });
 
           const result = await response.json();
+          const messageElement = document.getElementById("response-message");
 
           if (response.ok) {
             messageElement.textContent = result.message;
@@ -45,6 +50,9 @@
   <body>
     <div class="container">
       <h1>Reset Username</h1>
+      <div id="go-back">
+        <button onclick="handleBackButton()">Back to Login</button>
+      </div>
       <p>
         Enter your email address, and we will send en email with your username.
       </p>
